@@ -13,6 +13,9 @@
 
 namespace phpbb;
 
+use phpbb\legacy\exception\exit_exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 /**
 * JSON class
 */
@@ -23,16 +26,17 @@ class json_response
 	 *
 	 * @param array $data Any additional data to send.
 	 * @param bool $exit Will exit the script if true.
+	 *
+	 * @throws exit_exception
+	 *
+	 * @deprecated 3.1 Use Symfony\Component\HttpFoundation\JsonResponse instead
 	 */
 	public function send($data, $exit = true)
 	{
-		header('Content-Type: application/json');
-		echo json_encode($data);
+		$response = new JsonResponse($data);
+		$response->sendHeaders();
+		$response->sendContent();
 
-		if ($exit)
-		{
-			garbage_collection();
-			exit_handler();
-		}
+		throw new exit_exception();
 	}
 }

@@ -16,43 +16,8 @@
 *
 **/
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
+$_SERVER['SCRIPT_NAME'] =  str_replace('feed.php', 'app.php', $_SERVER['SCRIPT_NAME']);
+$_SERVER['PHP_SELF'] =  str_replace('feed.php', 'app.php', $_SERVER['PHP_SELF']);
+$_SERVER['SCRIPT_FILENAME'] =  str_replace('feed.php', 'app.php', $_SERVER['SCRIPT_FILENAME']);
 
-/**
-* @ignore
-**/
-define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
-$phpEx = substr(strrchr(__FILE__, '.'), 1);
-include($phpbb_root_path . 'common.' . $phpEx);
-
-/** @var \phpbb\controller\helper $controller_helper */
-$controller_helper = $phpbb_container->get('controller.helper');
-
-$forum_id	= $request->variable('f', 0);
-$topic_id	= $request->variable('t', 0);
-$mode	= $request->variable('mode', '');
-
-if ($forum_id !== 0)
-{
-	$url = $controller_helper->route('phpbb_feed_forum', array('forum_id' => $forum_id));
-}
-else if ($topic_id !== 0)
-{
-	$url = $controller_helper->route('phpbb_feed_topic', array('topic_id' => $topic_id));
-}
-else
-{
-	try
-	{
-		$url = $controller_helper->route('phpbb_feed_overall', array('mode' => $mode));
-	}
-	catch (InvalidParameterException $e)
-	{
-		$url = $controller_helper->route('phpbb_feed_index');
-	}
-}
-
-$response = new RedirectResponse($url, 301);
-$response->send();
+require 'app.php';

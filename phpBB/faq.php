@@ -11,26 +11,8 @@
 *
 */
 
-/**
-* @ignore
-*/
-define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
-$phpEx = substr(strrchr(__FILE__, '.'), 1);
-include($phpbb_root_path . 'common.' . $phpEx);
+$_SERVER['SCRIPT_NAME'] =  str_replace('faq.php', 'app.php', $_SERVER['SCRIPT_NAME']);
+$_SERVER['PHP_SELF'] =  str_replace('faq.php', 'app.php', $_SERVER['PHP_SELF']);
+$_SERVER['SCRIPT_FILENAME'] =  str_replace('faq.php', 'app.php', $_SERVER['SCRIPT_FILENAME']);
 
-// Start session management
-$user->session_begin();
-$auth->acl($user->data);
-$user->setup();
-
-/** @var \phpbb\controller\helper $controller_helper */
-$controller_helper = $phpbb_container->get('controller.helper');
-
-$response = new \Symfony\Component\HttpFoundation\RedirectResponse(
-	$controller_helper->route(
-		$request->variable('mode', 'faq') === 'bbcode' ? 'phpbb_help_bbcode_controller' : 'phpbb_help_faq_controller'
-	),
-	301
-);
-$response->send();
+require 'app.php';

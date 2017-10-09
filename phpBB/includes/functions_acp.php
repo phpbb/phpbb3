@@ -68,6 +68,17 @@ function adm_page_header($page_title)
 
 	$phpbb_version_parts = explode('.', PHPBB_VERSION, 3);
 	$phpbb_major = $phpbb_version_parts[0] . '.' . $phpbb_version_parts[1];
+	// Determine board url - we may need it later
+	$board_url = generate_board_url() . '/';
+	// This path is sent with the base template paths in the assign_vars()
+	// call below. We need to correct it in case we are accessing from a
+	// controller because the web paths will be incorrect otherwise.
+	/* @var $phpbb_path_helper \phpbb\path_helper */
+	$phpbb_path_helper = $phpbb_container->get('path_helper');
+	$corrected_path = $phpbb_path_helper->get_web_root_path();
+	$web_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? $board_url : $corrected_path;
+
+	$real_admin_path = $phpbb_path_helper->update_web_root_path($phpbb_admin_path);
 
 	$template->assign_vars(array(
 		'PAGE_TITLE'			=> $page_title,
@@ -77,7 +88,7 @@ function adm_page_header($page_title)
 		'_SID'					=> $_SID,
 		'SESSION_ID'			=> $user->session_id,
 		'ROOT_PATH'				=> $phpbb_root_path,
-		'ADMIN_ROOT_PATH'		=> $phpbb_admin_path,
+		'ADMIN_ROOT_PATH'		=> "{$web_path}{$phpbb_admin_path}",
 		'PHPBB_VERSION'			=> PHPBB_VERSION,
 		'PHPBB_MAJOR'			=> $phpbb_major,
 
@@ -86,26 +97,26 @@ function adm_page_header($page_title)
 		'U_ADM_INDEX'			=> append_sid("{$phpbb_admin_path}index.$phpEx"),
 		'U_INDEX'				=> append_sid("{$phpbb_root_path}index.$phpEx"),
 
-		'T_IMAGES_PATH'			=> "{$phpbb_root_path}images/",
-		'T_SMILIES_PATH'		=> "{$phpbb_root_path}{$config['smilies_path']}/",
-		'T_AVATAR_GALLERY_PATH'	=> "{$phpbb_root_path}{$config['avatar_gallery_path']}/",
-		'T_ICONS_PATH'			=> "{$phpbb_root_path}{$config['icons_path']}/",
-		'T_RANKS_PATH'			=> "{$phpbb_root_path}{$config['ranks_path']}/",
-		'T_UPLOAD_PATH'			=> "{$phpbb_root_path}{$config['upload_path']}/",
-		'T_FONT_AWESOME_LINK'	=> !empty($config['allow_cdn']) && !empty($config['load_font_awesome_url']) ? $config['load_font_awesome_url'] : "{$phpbb_root_path}assets/css/font-awesome.min.css?assets_version=" . $config['assets_version'],
+		'T_IMAGES_PATH'			=> "{$web_path}images/",
+		'T_SMILIES_PATH'		=> "{$web_path}{$config['smilies_path']}/",
+		'T_AVATAR_GALLERY_PATH'	=> "{$web_path}{$config['avatar_gallery_path']}/",
+		'T_ICONS_PATH'			=> "{$web_path}{$config['icons_path']}/",
+		'T_RANKS_PATH'			=> "{$web_path}{$config['ranks_path']}/",
+		'T_UPLOAD_PATH'			=> "{$web_path}{$config['upload_path']}/",
+		'T_FONT_AWESOME_LINK'	=> !empty($config['allow_cdn']) && !empty($config['load_font_awesome_url']) ? $config['load_font_awesome_url'] : "{$web_path}assets/css/font-awesome.min.css?assets_version=" . $config['assets_version'],
 
 		'T_ASSETS_VERSION'		=> $config['assets_version'],
 
-		'ICON_MOVE_UP'				=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_up.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
-		'ICON_MOVE_UP_DISABLED'		=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_up_disabled.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
-		'ICON_MOVE_DOWN'			=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_down.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
-		'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_down_disabled.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
-		'ICON_EDIT'					=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_edit.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
-		'ICON_EDIT_DISABLED'		=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_edit_disabled.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
-		'ICON_DELETE'				=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_delete.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
-		'ICON_DELETE_DISABLED'		=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_delete_disabled.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
-		'ICON_SYNC'					=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_sync.gif" alt="' . $user->lang['RESYNC'] . '" title="' . $user->lang['RESYNC'] . '" />',
-		'ICON_SYNC_DISABLED'		=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/icon_sync_disabled.gif" alt="' . $user->lang['RESYNC'] . '" title="' . $user->lang['RESYNC'] . '" />',
+		'ICON_MOVE_UP'				=> '<img src="' . $real_admin_path . 'images/icon_up.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
+		'ICON_MOVE_UP_DISABLED'		=> '<img src="' . $real_admin_path . 'images/icon_up_disabled.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
+		'ICON_MOVE_DOWN'			=> '<img src="' . $real_admin_path . 'images/icon_down.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
+		'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . $real_admin_path . 'images/icon_down_disabled.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
+		'ICON_EDIT'					=> '<img src="' . $real_admin_path . 'images/icon_edit.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
+		'ICON_EDIT_DISABLED'		=> '<img src="' . $real_admin_path . 'images/icon_edit_disabled.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
+		'ICON_DELETE'				=> '<img src="' . $real_admin_path . 'images/icon_delete.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
+		'ICON_DELETE_DISABLED'		=> '<img src="' . $real_admin_path . 'images/icon_delete_disabled.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
+		'ICON_SYNC'					=> '<img src="' . $real_admin_path . 'images/icon_sync.gif" alt="' . $user->lang['RESYNC'] . '" title="' . $user->lang['RESYNC'] . '" />',
+		'ICON_SYNC_DISABLED'		=> '<img src="' . $real_admin_path . 'images/icon_sync_disabled.gif" alt="' . $user->lang['RESYNC'] . '" title="' . $user->lang['RESYNC'] . '" />',
 
 		'S_USER_LANG'			=> $user->lang['USER_LANG'],
 		'S_CONTENT_DIRECTION'	=> $user->lang['DIRECTION'],
@@ -150,7 +161,7 @@ function adm_page_header($page_title)
 function adm_page_footer($copyright_html = true)
 {
 	global $db, $config, $template, $user, $auth;
-	global $phpbb_root_path;
+	global $phpbb_path_helper, $phpbb_root_path;
 	global $request, $phpbb_dispatcher;
 
 	// A listener can set this variable to `true` when it overrides this function
@@ -180,7 +191,7 @@ function adm_page_footer($copyright_html = true)
 		'TRANSLATION_INFO'	=> (!empty($user->lang['TRANSLATION_INFO'])) ? $user->lang['TRANSLATION_INFO'] : '',
 		'S_COPYRIGHT_HTML'	=> $copyright_html,
 		'CREDIT_LINE'		=> $user->lang('POWERED_BY', '<a href="https://www.phpbb.com/">phpBB</a>&reg; Forum Software &copy; phpBB Limited'),
-		'T_JQUERY_LINK'		=> !empty($config['allow_cdn']) && !empty($config['load_jquery_url']) ? $config['load_jquery_url'] : "{$phpbb_root_path}assets/javascript/jquery.min.js",
+		'T_JQUERY_LINK'		=> !empty($config['allow_cdn']) && !empty($config['load_jquery_url']) ? $config['load_jquery_url'] : $phpbb_path_helper->update_web_root_path($phpbb_root_path . 'assets/javascript/jquery.min.js'),
 		'S_ALLOW_CDN'		=> !empty($config['allow_cdn']),
 		'VERSION'			=> $config['version'])
 	);
@@ -188,7 +199,7 @@ function adm_page_footer($copyright_html = true)
 	$template->display('body');
 
 	garbage_collection();
-	exit_handler();
+	throw new \phpbb\legacy\exception\exit_exception();
 }
 
 /**

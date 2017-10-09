@@ -1483,7 +1483,7 @@ function tracking_unserialize($string, $max_depth = 3)
 function append_sid($url, $params = false, $is_amp = true, $session_id = false, $is_route = false)
 {
 	global $_SID, $_EXTRA_URL, $phpbb_hook, $phpbb_path_helper;
-	global $phpbb_dispatcher;
+	global $phpbb_dispatcher, $config, $phpEx;
 
 	if ($params === '' || (is_array($params) && empty($params)))
 	{
@@ -1494,7 +1494,29 @@ function append_sid($url, $params = false, $is_amp = true, $session_id = false, 
 	// Update the root path with the correct relative web path
 	if (!$is_route && $phpbb_path_helper instanceof \phpbb\path_helper)
 	{
+		// All front controllers are wrapped by app.php
+		if (strpos($url, 'app.php') === false)
+		{
+			if (strpos($url, $phpbb_path_helper->get_phpbb_root_path()) === 0)
+			{
+				$url = str_replace(
+					$phpbb_path_helper->get_phpbb_root_path(),
+					$phpbb_path_helper->get_phpbb_root_path() . "app.{$phpEx}/",
+					$url
+				);
+			}
+			else if (filter_var($url, FILTER_VALIDATE_URL) === false)
+			{
+				$url = "./app.{$phpEx}/{$url}";
+			}
+		}
+
 		$url = $phpbb_path_helper->update_web_root_path($url);
+	}
+
+	if (!empty($config['enable_mod_rewrite']))
+	{
+		$url = str_replace("/app.{$phpEx}", '', $url);
 	}
 
 	$append_sid_overwrite = false;
@@ -1816,12 +1838,13 @@ function redirect($url, $return = false, $disable_cd_check = false)
 		echo '</body>';
 		echo '</html>';
 
-		exit;
+		throw new \phpbb\legacy\exception\exit_exception();
 	}
 
 	// Behave as per HTTP/1.1 spec for others
 	header('Location: ' . $url);
-	exit;
+
+	throw new \phpbb\legacy\exception\exit_exception();
 }
 
 /**
@@ -3365,7 +3388,7 @@ function msg_handler($errno, $msg_text, $errfile, $errline)
 			echo '</body>';
 			echo '</html>';
 
-			exit_handler();
+			throw new \phpbb\legacy\exception\exit_exception();
 
 			// On a fatal error (and E_USER_ERROR *is* fatal) we never want other scripts to continue and force an exit here.
 			exit;
@@ -3391,7 +3414,7 @@ function msg_handler($errno, $msg_text, $errfile, $errline)
 
 			if ($msg_text == 'ERROR_NO_ATTACHMENT' || $msg_text == 'NO_FORUM' || $msg_text == 'NO_TOPIC' || $msg_text == 'NO_USER')
 			{
-				send_status_line(404, 'Not Found');
+				throw new \phpbb\exception\http_exception(404, $msg_text);
 			}
 
 			$msg_text = (!empty($user->lang[$msg_text])) ? $user->lang[$msg_text] : $msg_text;
@@ -3446,7 +3469,7 @@ function msg_handler($errno, $msg_text, $errfile, $errline)
 				page_footer();
 			}
 
-			exit_handler();
+			throw new \phpbb\legacy\exception\exit_exception();
 		break;
 
 		// PHP4 compatibility
@@ -4683,7 +4706,7 @@ function page_footer($run_cron = true, $display_template = true, $exit_handler =
 
 	if ($exit_handler)
 	{
-		exit_handler();
+		throw new \phpbb\legacy\exception\exit_exception();
 	}
 }
 
@@ -4718,30 +4741,6 @@ function garbage_collection()
 	{
 		$db->sql_close();
 	}
-}
-
-/**
-* Handler for exit calls in phpBB.
-* This function supports hooks.
-*
-* Note: This function is called after the template has been outputted.
-*/
-function exit_handler()
-{
-	global $phpbb_hook;
-
-	if (!empty($phpbb_hook) && $phpbb_hook->call_hook(__FUNCTION__))
-	{
-		if ($phpbb_hook->hook_return(__FUNCTION__))
-		{
-			return $phpbb_hook->hook_return_result(__FUNCTION__);
-		}
-	}
-
-	// As a pre-caution... some setups display a blank page if the flush() is not there.
-	(ob_get_level() > 0) ? @ob_flush() : @flush();
-
-	exit;
 }
 
 /**
