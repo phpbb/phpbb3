@@ -113,12 +113,6 @@ class acp_attachments
 		switch ($mode)
 		{
 			case 'attach':
-
-				if (!function_exists('get_supported_image_types'))
-				{
-					include($phpbb_root_path . 'includes/functions_posting.' . $phpEx);
-				}
-
 				$sql = 'SELECT group_name, cat_id
 					FROM ' . EXTENSION_GROUPS_TABLE . '
 					WHERE cat_id > 0
@@ -249,7 +243,9 @@ class acp_attachments
 					}
 				}
 
-				$supported_types = get_supported_image_types();
+				/** @var \phpbb\attachment\image_helper $image_helper */
+				$image_helper = new \phpbb\attachment\image_helper();
+				$supported_types = $image_helper->get_supported_image_types();
 
 				// Check Thumbnail Support
 				if (!$this->new_config['img_imagick'] && (!isset($supported_types['format']) || !count($supported_types['format'])))

@@ -9,6 +9,9 @@ services:
             - '@attachment.resync'
             - '@storage.attachment'
 
+    attachment.image_helper:
+        class: phpbb\attachment\image_helper
+
     attachment.manager:
         class: phpbb\attachment\manager
         shared: false
@@ -22,6 +25,26 @@ services:
         shared: false
         arguments:
             - '@dbal.conn'
+
+    attachment.resize:
+        class: phpbb\attachment\resize
+        arguments:
+            - '@filesystem'
+            - '@attachment.image_helper'
+            - '@php_ini'
+            - '@upload_imagesize'
+
+    attachment.resync:
+        class: phpbb\attachment\resync
+        scope: prototype
+        arguments:
+            - '@dbal.conn'
+
+    attachment.thumbnail:
+        class: phpbb\attachment\thumbnail
+        arguments:
+            - '@config'
+            - '@attachment.resize'
 
     attachment.upload:
         class: phpbb\attachment\upload
@@ -37,4 +60,5 @@ services:
             - '@plupload'
             - '@storage.attachment'
             - '@filesystem.temp'
+            - '@attachment.thumbnail'
             - '@user'

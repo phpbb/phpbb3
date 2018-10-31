@@ -42,6 +42,9 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 	/** @var \phpbb\storage\storage */
 	protected $storage;
 
+	/** @var \phpbb\attachment\resize */
+	protected $resize;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -68,6 +71,9 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 
 	/** @var \bantu\IniGetWrapper\IniGetWrapper */
 	protected $php_ini;
+
+	/** @var \phpbb\attachment\thumbnail */
+	protected $thumbnail;
 
 	public function getDataSet()
 	{
@@ -146,6 +152,8 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 		$this->phpbb_dispatcher = new phpbb_mock_event_dispatcher();
 		$this->temp = new \phpbb\filesystem\temp($this->filesystem, '');
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$this->resize = new \phpbb\attachment\resize(new \phpbb\filesystem\filesystem(), new \phpbb\attachment\image_helper(), $this->php_ini, new \FastImageSize\FastImageSize());
+		$this->thumbnail = new \phpbb\attachment\thumbnail($this->config, $this->resize);
 
 		$this->upload = new \phpbb\attachment\upload(
 			$this->auth,
@@ -158,7 +166,9 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 			$this->plupload,
 			$this->storage,
 			$this->temp,
-			$this->user
+			$this->thumbnail,
+			$this->user,
+			$this->phpbb_root_path
 		);
 	}
 
@@ -251,7 +261,9 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 			$this->plupload,
 			$this->storage,
 			$this->temp,
-			$this->user
+			$this->thumbnail,
+			$this->user,
+			$this->phpbb_root_path
 		);
 
 		$filedata = $this->upload->upload('foobar', 1, true);
@@ -416,7 +428,9 @@ class phpbb_attachment_upload_test extends \phpbb_database_test_case
 			$plupload,
 			$this->storage,
 			$this->temp,
-			$this->user
+			$this->thumbnail,
+			$this->user,
+			$this->phpbb_root_path
 		);
 
 		$filedata = $this->upload->upload('foobar', 1, true, '', false, array(
