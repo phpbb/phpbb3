@@ -23,12 +23,14 @@ class version_helper
 	/**
 	 * @var string Host
 	 */
-	protected $host = 'version.phpbb.com';
+	//protected $host = 'version.phpbb.com';
+	protected $host = 'localhost';
 
 	/**
 	 * @var string Path to file
 	 */
-	protected $path = '/phpbb';
+	//protected $path = '/phpbb';
+	protected $path = '/';
 
 	/**
 	 * @var string File name
@@ -38,6 +40,7 @@ class version_helper
 	/**
 	 * @var bool Use SSL or not
 	 */
+	//protected $use_ssl = true;
 	protected $use_ssl = false;
 
 	/**
@@ -64,6 +67,7 @@ class version_helper
 		'stable' => array(
 			'current'		=> 'version',
 			'download'		=> 'url',
+			'signature'		=> 'url',
 			'announcement'	=> 'url',
 			'eol'			=> 'url',
 			'security'		=> 'bool',
@@ -71,6 +75,7 @@ class version_helper
 		'unstable' => array(
 			'current'		=> 'version',
 			'download'		=> 'url',
+			'signature'		=> 'url',
 			'announcement'	=> 'url',
 			'eol'			=> 'url',
 			'security'		=> 'bool',
