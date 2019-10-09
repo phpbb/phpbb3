@@ -63,6 +63,12 @@ class container_configuration implements ConfigurationInterface
 						->booleanNode('log_errors')->defaultValue(false)->end()
 					->end()
 				->end()
+				->arrayNode('finder')
+					->addDefaultsIfNotSet()
+					->children()
+						->booleanNode('cache')->defaultValue(true)->end()
+					->end()
+				->end()
 			->end()
 		;
 		return $treeBuilder;

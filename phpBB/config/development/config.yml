@@ -23,3 +23,6 @@ core:
 
     session:
         log_errors: true
+
+    finder:
+        cache: false

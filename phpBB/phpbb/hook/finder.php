@@ -55,7 +55,7 @@ class finder
 	*/
 	public function find($cache = true)
 	{
-		if (!defined('DEBUG') && $cache && $this->cache)
+		if ($cache && $this->cache)
 		{
 			$hook_files = $this->cache->get('_hooks');
 			if ($hook_files !== false)
