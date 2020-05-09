@@ -18,7 +18,7 @@ use phpbb\image\image_cropper;
 use phpbb\storage\exception\exception as storage_exception;
 
 /**
-* Handles avatars uploaded to the board
+* Handles avatars uploaded to the board.
 */
 class upload extends \phpbb\avatar\driver\driver
 {
@@ -97,7 +97,7 @@ class upload extends \phpbb\avatar\driver\driver
 			'AVATAR_ALLOWED_EXTENSIONS' => implode(',', preg_replace('/^/', '.', $this->allowed_extensions)),
 			'AVATAR_UPLOAD_SIZE'		=> $this->config['avatar_filesize'],
 			'S_CROPPING_AVAILABLE'		=> image_cropper::is_available(),
-			'S_UPLOAD_AVATAR_URL'		=> ($this->config['allow_avatar_remote_upload']) ? true : false,
+			'S_UPLOAD_AVATAR_URL'		=> (bool) $this->config['allow_avatar_remote_upload'],
 			'T_ASSETS_PATH'				=> $web_path . '/assets',
 		]);
 
@@ -277,7 +277,6 @@ class upload extends \phpbb\avatar\driver\driver
 	*/
 	public function delete($row)
 	{
-
 		$error = array();
 		$prefix = $this->config['avatar_salt'] . '_';
 		$ext = substr(strrchr($row['avatar'], '.'), 1);
