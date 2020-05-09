@@ -14,6 +14,7 @@
 namespace phpbb\avatar\driver;
 
 use bantu\IniGetWrapper\IniGetWrapper;
+use phpbb\image\image_cropper;
 use phpbb\storage\exception\exception as storage_exception;
 
 /**
@@ -89,11 +90,16 @@ class upload extends \phpbb\avatar\driver\driver
 			return false;
 		}
 
-		$template->assign_vars(array(
-			'S_UPLOAD_AVATAR_URL' => ($this->config['allow_avatar_remote_upload']) ? true : false,
-			'AVATAR_UPLOAD_SIZE' => $this->config['avatar_filesize'],
+		$use_board = defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH;
+		$web_path = $use_board ? generate_board_url() . '/' : $this->path_helper->get_web_root_path();
+
+		$template->assign_vars([
 			'AVATAR_ALLOWED_EXTENSIONS' => implode(',', preg_replace('/^/', '.', $this->allowed_extensions)),
-		));
+			'AVATAR_UPLOAD_SIZE'		=> $this->config['avatar_filesize'],
+			'S_CROPPING_AVAILABLE'		=> image_cropper::is_available(),
+			'S_UPLOAD_AVATAR_URL'		=> ($this->config['allow_avatar_remote_upload']) ? true : false,
+			'T_ASSETS_PATH'				=> $web_path . '/assets',
+		]);
 
 		return true;
 	}
@@ -125,6 +131,7 @@ class upload extends \phpbb\avatar\driver\driver
 
 		if (!empty($upload_file['name']))
 		{
+			/** @var \phpbb\files\filespec_storage $file */
 			$file = $upload->handle_upload('files.types.form_storage', 'avatar_upload_file');
 		}
 		else if (!empty($this->config['allow_avatar_remote_upload']) && !empty($url))
@@ -166,6 +173,7 @@ class upload extends \phpbb\avatar\driver\driver
 				return false;
 			}
 
+			/** @var \phpbb\files\filespec_storage $file */
 			$file = $upload->handle_upload('files.types.remote_storage', $url);
 		}
 		else
@@ -182,6 +190,14 @@ class upload extends \phpbb\avatar\driver\driver
 			$file->remove($this->storage);
 			$error = $file->error;
 			return false;
+		}
+
+		// Lets try to crop the avatar
+		$data = $request->variable('avatar_cropper_data', '', true);
+
+		if (!empty($upload_file['name']) && $data && image_cropper::is_file_supported($file))
+		{
+			image_cropper::crop_file_by_data($file, json_decode(htmlspecialchars_decode($data, ENT_COMPAT), true));
 		}
 
 		$filedata = array(
