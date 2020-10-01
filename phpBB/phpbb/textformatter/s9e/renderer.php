@@ -44,11 +44,6 @@ class renderer implements \phpbb\textformatter\renderer_interface
 	protected $viewcensors = false;
 
 	/**
-	* @var bool Status of the viewflash option
-	*/
-	protected $viewflash = false;
-
-	/**
 	* @var bool Status of the viewimg option
 	*/
 	protected $viewimg = false;
@@ -147,7 +142,7 @@ class renderer implements \phpbb\textformatter\renderer_interface
 	/**
 	* Configure this renderer as per the user's settings
 	*
-	* Should set the locale as well as the viewcensor/viewflash/viewimg/viewsmilies options.
+	* Should set the locale as well as the viewcensor/viewimg/viewsmilies options.
 	*
 	* @param  \phpbb\user          $user
 	* @param  \phpbb\config\config $config
@@ -159,7 +154,6 @@ class renderer implements \phpbb\textformatter\renderer_interface
 		$censor = $user->optionget('viewcensors') || !$config['allow_nocensors'] || !$auth->acl_get('u_chgcensors');
 
 		$this->set_viewcensors($censor);
-		$this->set_viewflash($user->optionget('viewflash'));
 		$this->set_viewimg($user->optionget('viewimg'));
 		$this->set_viewsmilies($user->optionget('viewsmilies'));
 
@@ -198,14 +192,6 @@ class renderer implements \phpbb\textformatter\renderer_interface
 	public function get_viewcensors()
 	{
 		return $this->viewcensors;
-	}
-
-	/**
-	* {@inheritdoc}
-	*/
-	public function get_viewflash()
-	{
-		return $this->viewflash;
 	}
 
 	/**
@@ -282,15 +268,6 @@ class renderer implements \phpbb\textformatter\renderer_interface
 	{
 		$this->viewcensors = $value;
 		$this->renderer->setParameter('S_VIEWCENSORS', $value);
-	}
-
-	/**
-	* {@inheritdoc}
-	*/
-	public function set_viewflash($value)
-	{
-		$this->viewflash = $value;
-		$this->renderer->setParameter('S_VIEWFLASH', $value);
 	}
 
 	/**

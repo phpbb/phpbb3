@@ -57,7 +57,6 @@ class factory implements \phpbb\textformatter\cache_interface
 	*/
 	protected $custom_tokens = array(
 		'email' => array('{DESCRIPTION}' => '{TEXT}'),
-		'flash' => array('{WIDTH}' => '{NUMBER1}', '{HEIGHT}' => '{NUMBER2}'),
 		'img'   => array('{URL}' => '{IMAGEURL}'),
 		'list'  => array('{LIST_TYPE}' => '{HASHMAP}'),
 		'quote' => array('{USERNAME}' => '{TEXT1}'),
@@ -79,7 +78,6 @@ class factory implements \phpbb\textformatter\cache_interface
 		'code'  => '[CODE lang={IDENTIFIER;optional}]{TEXT}[/CODE]',
 		'color' => '[COLOR={COLOR}]{TEXT}[/COLOR]',
 		'email' => '[EMAIL={EMAIL;useContent} subject={TEXT1;optional;postFilter=rawurlencode} body={TEXT2;optional;postFilter=rawurlencode}]{TEXT}[/EMAIL]',
-		'flash' => '[FLASH={NUMBER1},{NUMBER2} width={NUMBER1;postFilter=#flashwidth} height={NUMBER2;postFilter=#flashheight} url={URL;useContent} /]',
 		'i'     => '[I]{TEXT}[/I]',
 		'img'   => '[IMG src={IMAGEURL;useContent}]',
 		'list'  => '[LIST type={HASHMAP=1:decimal,a:lower-alpha,A:upper-alpha,i:lower-roman,I:upper-roman;optional;postFilter=#simpletext} #createChild=LI]{TEXT}[/LIST]',
@@ -249,18 +247,6 @@ class factory implements \phpbb\textformatter\cache_interface
 		$filter = new RegexpFilter('!^([\p{L}\p{N}\-+,_. ]+)$!Du');
 		$configurator->attributeFilters->add('#inttext', $filter);
 
-		// Create custom filters for Flash restrictions, which use the same values as the image
-		// restrictions but have their own error message
-		$configurator->attributeFilters
-			->add('#flashheight', __NAMESPACE__ . '\\parser::filter_flash_height')
-			->addParameterByName('max_img_height')
-			->addParameterByName('logger');
-
-		$configurator->attributeFilters
-			->add('#flashwidth', __NAMESPACE__ . '\\parser::filter_flash_width')
-			->addParameterByName('max_img_width')
-			->addParameterByName('logger');
-
 		// Create a custom filter for phpBB's per-mode font size limits
 		$configurator->attributeFilters
 			->add('#fontsize', __NAMESPACE__ . '\\parser::filter_font_size')
@@ -287,12 +273,9 @@ class factory implements \phpbb\textformatter\cache_interface
 			$configurator->tags['QUOTE']->nestingLimit = PHP_INT_MAX;
 		}
 
-		// Modify the template to disable images/flash depending on user's settings
-		foreach (array('FLASH', 'IMG') as $name)
-		{
-			$tag = $configurator->tags[$name];
-			$tag->template = '<xsl:choose><xsl:when test="$S_VIEW' . $name . '">' . $tag->template . '</xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose>';
-		}
+		// Modify the template to disable images depending on user's settings
+		$tag = $configurator->tags['IMG'];
+		$tag->template = '<xsl:choose><xsl:when test="$S_VIEWIMG">' . $tag->template . '</xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose>';
 
 		// Load custom BBCodes
 		foreach ($this->data_access->get_bbcodes() as $row)
