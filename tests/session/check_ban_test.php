@@ -42,8 +42,11 @@ class phpbb_session_check_ban_test extends phpbb_session_test_case
 	{
 		parent::setUp();
 		// Get session here so that config is mocked correctly
+		global $cache, $config, $phpbb_root_path, $phpEx, $phpbb_filesystem, $phpbb_container;
+
 		$this->session = $this->session_factory->get_session($this->db);
-		global $cache, $config, $phpbb_root_path, $phpEx, $phpbb_filesystem;
+
+		$phpbb_container->set('controller.helper', $this->createMock('\phpbb\controller\helper'));
 
 		$phpbb_filesystem = new \phpbb\filesystem\filesystem();
 

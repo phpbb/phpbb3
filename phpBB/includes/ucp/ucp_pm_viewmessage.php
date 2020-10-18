@@ -411,6 +411,9 @@ function get_user_information($user_id, $user_row)
 {
 	global $db, $auth, $user;
 	global $phpbb_root_path, $phpEx, $config;
+	global $phpbb_container;
+
+	$controller_helper = $phpbb_container->get('controller.helper');
 
 	if (!$user_id)
 	{
@@ -463,7 +466,7 @@ function get_user_information($user_id, $user_row)
 
 	if ((!empty($user_row['user_allow_viewemail']) && $auth->acl_get('u_sendemail')) || $auth->acl_get('a_email'))
 	{
-		$user_row['email'] = ($config['board_email_form'] && $config['email_enable']) ? append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=email&amp;u=$user_id") : ((($config['board_hide_emails'] && !$auth->acl_get('a_email')) || empty($user_row['user_email'])) ? '' : 'mailto:' . $user_row['user_email']);
+		$user_row['email'] = ($config['board_email_form'] && $config['email_enable']) ? $controller_helper->route('phpbb_message_user', ['user_id' => $user_id]) : ((($config['board_hide_emails'] && !$auth->acl_get('a_email')) || empty($user_row['user_email'])) ? '' : 'mailto:' . $user_row['user_email']);
 	}
 
 	return $user_row;

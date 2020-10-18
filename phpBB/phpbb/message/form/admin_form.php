@@ -11,7 +11,14 @@
 *
 */
 
-namespace phpbb\message;
+namespace phpbb\message\form;
+
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\config\db_text;
+use phpbb\db\driver\driver_interface;
+use phpbb\event\dispatcher_interface;
+use phpbb\user;
 
 /**
 * Class admin_form
@@ -19,32 +26,34 @@ namespace phpbb\message;
 */
 class admin_form extends form
 {
-	/** @var \phpbb\config\db_text */
+	/** @var db_text */
 	protected $config_text;
 
-	/** @var \phpbb\event\dispatcher_interface */
+	/** @var dispatcher_interface */
 	protected $dispatcher;
 
 	/** @var string */
 	protected $subject;
+
 	/** @var string */
 	protected $sender_name;
+
 	/** @var string */
 	protected $sender_address;
 
 	/**
 	* Construct
 	*
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\config\config $config
-	* @param \phpbb\config\db_text $config_text
-	* @param \phpbb\db\driver\driver_interface $db
-	* @param \phpbb\user $user
-	* @param \phpbb\event\dispatcher_interface $dispatcher
+	* @param auth $auth
+	* @param config $config
+	* @param db_text $config_text
+	* @param driver_interface $db
+	* @param user $user
+	* @param dispatcher_interface $dispatcher
 	* @param string $phpbb_root_path
 	* @param string $phpEx
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\config\db_text $config_text, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\event\dispatcher_interface $dispatcher, $phpbb_root_path, $phpEx)
+	public function __construct(auth $auth, config $config, db_text $config_text, driver_interface $db, user $user, dispatcher_interface $dispatcher, $phpbb_root_path, $phpEx)
 	{
 		parent::__construct($auth, $config, $db, $user, $phpbb_root_path, $phpEx);
 		$this->config_text = $config_text;
@@ -184,6 +193,10 @@ class admin_form extends form
 	*/
 	public function render(\phpbb\template\template $template)
 	{
+		global $phpbb_container;
+
+		$controller_helper = $phpbb_container->get('controller.helper');
+
 		$l_admin_info = $this->config_text->get('contact_admin_info');
 		if ($l_admin_info)
 		{
@@ -206,7 +219,7 @@ class admin_form extends form
 			'S_CONTACT_ADMIN'	=> true,
 			'S_CONTACT_FORM'	=> $this->config['contact_admin_form_enable'],
 			'S_IS_REGISTERED'	=> $this->user->data['is_registered'],
-			'S_POST_ACTION'		=> append_sid($this->phpbb_root_path . 'memberlist.' . $this->phpEx, 'mode=contactadmin'),
+			'S_POST_ACTION'		=> $controller_helper->route('phpbb_message_admin'),
 
 			'CONTACT_INFO'		=> $l_admin_info,
 			'MESSAGE'			=> $this->body,

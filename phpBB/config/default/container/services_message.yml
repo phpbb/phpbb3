@@ -1,0 +1,63 @@
+services:
+
+# Form services
+    message.form.admin:
+        class: phpbb\message\form\admin_form
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@config_text'
+            - '@dbal.conn'
+            - '@user'
+            - '@dispatcher'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    message.form.topic:
+        class: phpbb\message\form\topic_form
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    message.form.user:
+        class: phpbb\message\form\user_form
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+# Controllers
+    message.controller.admin:
+        class: phpbb\message\controller\admin
+        arguments:
+            - '@message.form.admin'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+
+    message.controller.topic:
+        class: phpbb\message\controller\topic
+        arguments:
+            - '@dbal.conn'
+            - '@message.form.topic'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+
+    message.controller.user:
+        class: phpbb\message\controller\user
+        arguments:
+            - '@message.form.user'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'

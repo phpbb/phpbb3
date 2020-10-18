@@ -11,7 +11,7 @@
 *
 */
 
-namespace phpbb\message;
+namespace phpbb\message\form;
 
 /**
 * Abstract class form
@@ -60,7 +60,7 @@ abstract class form
 		$this->config = $config;
 		$this->db = $db;
 
-		$this->message = new message($config['server_name']);
+		$this->message = new \phpbb\message\message($config['server_name']);
 		$this->message->set_sender_from_user($this->user);
 	}
 
@@ -81,7 +81,7 @@ abstract class form
 	*/
 	public function get_template_file()
 	{
-		return 'memberlist_email.html';
+		return 'email.html';
 	}
 
 	/**
@@ -134,7 +134,7 @@ abstract class form
 	*/
 	public function submit(\messenger $messenger)
 	{
-		if (!check_form_key('memberlist_email'))
+		if (!check_form_key('message_email'))
 		{
 			$this->errors[] = $this->user->lang('FORM_INVALID');
 		}
@@ -166,7 +166,7 @@ abstract class form
 	*/
 	public function render(\phpbb\template\template $template)
 	{
-		add_form_key('memberlist_email');
+		add_form_key('message_email');
 
 		$template->assign_vars(array(
 			'ERROR_MESSAGE'		=> (count($this->errors)) ? implode('<br />', $this->errors) : '',

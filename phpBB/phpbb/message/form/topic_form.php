@@ -11,7 +11,7 @@
 *
 */
 
-namespace phpbb\message;
+namespace phpbb\message\form;
 
 /**
 * Class topic_form
@@ -97,7 +97,7 @@ class topic_form extends form
 	{
 		parent::bind($request);
 
-		$this->topic_id = $request->variable('t', 0);
+		$this->topic_id = $request->variable('topic_id', 0);
 		$this->recipient_address = $request->variable('email', '');
 		$this->recipient_name = $request->variable('name', '', true);
 		$this->recipient_lang = $request->variable('lang', $this->config['default_lang']);
@@ -150,6 +150,10 @@ class topic_form extends form
 	*/
 	public function render(\phpbb\template\template $template)
 	{
+		global $phpbb_container;
+
+		$controller_helper = $phpbb_container->get('controller.helper');
+
 		parent::render($template);
 
 		$this->user->add_lang('viewtopic');
@@ -160,7 +164,7 @@ class topic_form extends form
 			'MESSAGE'			=> $this->body,
 
 			'L_EMAIL_BODY_EXPLAIN'	=> $this->user->lang['EMAIL_TOPIC_EXPLAIN'],
-			'S_POST_ACTION'			=> append_sid($this->phpbb_root_path . 'memberlist.' . $this->phpEx, 'mode=email&amp;t=' . $this->topic_id))
-		);
+			'S_POST_ACTION'			=> $controller_helper->route('phpbb_message_topic', ['topic_id' => $this->topic_id]),
+		));
 	}
 }

@@ -11,7 +11,7 @@
 *
 */
 
-namespace phpbb\message;
+namespace phpbb\message\form;
 
 /**
 * Class user_form
@@ -87,7 +87,7 @@ class user_form extends form
 	{
 		parent::bind($request);
 
-		$this->recipient_id = $request->variable('u', 0);
+		$this->recipient_id = $request->variable('user_id', 0);
 		$this->subject = $request->variable('subject', '', true);
 
 		$this->recipient_row = $this->get_user_row($this->recipient_id);
@@ -121,11 +121,15 @@ class user_form extends form
 	*/
 	public function render(\phpbb\template\template $template)
 	{
+		global $phpbb_container;
+
+		$controller_helper = $phpbb_container->get('controller.helper');
+
 		parent::render($template);
 
 		$template->assign_vars(array(
 			'S_SEND_USER'			=> true,
-			'S_POST_ACTION'			=> append_sid($this->phpbb_root_path . 'memberlist.' . $this->phpEx, 'mode=email&amp;u=' . $this->recipient_id),
+			'S_POST_ACTION'			=> $controller_helper->route('phpbb_message_user', ['user_id' => $this->recipient_id]),
 
 			'L_SEND_EMAIL_USER'		=> $this->user->lang('SEND_EMAIL_USER', $this->recipient_row['username']),
 			'USERNAME_FULL'			=> get_username_string('full', $this->recipient_row['user_id'], $this->recipient_row['username'], $this->recipient_row['user_colour']),

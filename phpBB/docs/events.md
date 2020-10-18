@@ -1329,9 +1329,9 @@ all display modes (leader, group and normal memberlist).
 memberlist_email_before
 ===
 * Locations:
-    + styles/prosilver/template/memberlist_email.html
+    + styles/prosilver/template/email.html
 * Since: 3.1.10-RC1
-* Purpose: Allow adding customizations before the memberlist_email form.
+* Purpose: Allow adding customizations before the email form.
 
 memberlist_search_fields_after
 ===
