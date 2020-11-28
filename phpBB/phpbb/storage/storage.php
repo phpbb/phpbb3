@@ -91,6 +91,7 @@ class storage
 		if ($this->adapter === null)
 		{
 			$this->adapter = $this->factory->get($this->storage_name);
+			$this->adapter->set_storage($this->get_name());
 		}
 
 		return $this->adapter;

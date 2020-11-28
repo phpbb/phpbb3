@@ -203,7 +203,7 @@ class filespec_storage
 				// Replace any chars which may cause us problems with _
 				$bad_chars = array("'", "\\", ' ', '/', ':', '*', '?', '"', '<', '>', '|');
 
-				$this->realname = rawurlencode(str_replace($bad_chars, '_', strtolower($this->realname)));
+				$this->realname = rawurlencode(str_replace($bad_chars, '_', $this->realname));
 				$this->realname = preg_replace("/%(\w{2})/", '_', $this->realname);
 
 				$this->realname = $prefix . $this->realname . '.' . $this->extension;
@@ -217,6 +217,16 @@ class filespec_storage
 				$this->extension = strtolower($this->extension);
 				$this->realname = $prefix . $user_id . '.' . $this->extension;
 
+			break;
+
+			case 'attachment':
+				// Replace any chars which may cause us problems with _
+				$bad_chars = array("'", "\\", ' ', '/', ':', '*', '?', '"', '<', '>', '|');
+
+				$this->realname = rawurlencode(str_replace($bad_chars, '_', strtolower($this->realname)));
+				$this->realname = preg_replace("/%(\w{2})/", '_', $this->realname);
+
+				$this->realname = $prefix . pathinfo($this->realname, PATHINFO_FILENAME) . '_' . gen_rand_string() . '.' . $this->extension;
 			break;
 
 			case 'unique_ext':
