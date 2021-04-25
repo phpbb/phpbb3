@@ -762,6 +762,8 @@ $lang = array_merge($lang, array(
 	'LOG_STYLE_EDIT_DETAILS'	=> '<strong>Edited style</strong><br />» %s',
 	'LOG_STYLE_EXPORT'			=> '<strong>Exported style</strong><br />» %s',
 
+	'LOG_STORAGE_UPDATE'		=> '<strong>Storage updated</strong><br />» %s',
+
 	// @deprecated 3.1
 	'LOG_TEMPLATE_ADD_DB'			=> '<strong>Added new template set to database</strong><br />» %s',
 	// @deprecated 3.1

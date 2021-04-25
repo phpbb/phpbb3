@@ -39,15 +39,29 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 
 	// Template
-	'STORAGE_TITLE'					=> 'Storage Settings',
-	'STORAGE_TITLE_EXPLAIN'			=> 'Change storage providers for the file storage types of phpBB. Choose local or remote providers to store files added to or created by phpBB.',
-	'STORAGE_SELECT'				=> 'Select storage',
-	'STORAGE_SELECT_DESC'			=> 'Select a storage from the list.',
-	'STORAGE_NAME'					=> 'Storage name',
-	'STORAGE_NUM_FILES'				=> 'Number of files',
-	'STORAGE_SIZE'					=> 'Size',
-	'STORAGE_FREE'					=> 'Available space',
-	'STORAGE_UNKNOWN'				=> 'Unknown',
+	'STORAGE_TITLE'							=> 'Storage Settings',
+	'STORAGE_TITLE_EXPLAIN'					=> 'Change storage providers for the file storage types of phpBB. Choose local or remote providers to store files added to or created by phpBB.',
+	'STORAGE_SELECT'						=> 'Select storage',
+	'STORAGE_SELECT_DESC'					=> 'Select a storage from the list.',
+	'STORAGE_NAME'							=> 'Storage name',
+	'STORAGE_NUM_FILES'						=> 'Number of files',
+	'STORAGE_SIZE'							=> 'Size',
+	'STORAGE_FREE'							=> 'Available space',
+	'STORAGE_UNKNOWN'						=> 'Unknown',
+	'STORAGE_UPDATE_TYPE'					=> 'Update type',
+	'STORAGE_UPDATE_TYPE_CONFIG'			=> 'Update configuration only',
+	'STORAGE_UPDATE_TYPE_COPY'				=> 'Update configuration and copy files',
+	'STORAGE_UPDATE_TYPE_MOVE'				=> 'Update configuration and move files',
+	'START_UPDATING'						=> 'Start update process',
+	'START_UPDATING_EXPLAIN'				=> 'Start the storage update process',
+	'CONTINUE_UPDATING'						=> 'Continue previous update process',
+	'CONTINUE_UPDATING_EXPLAIN'				=> 'An update process has been started. In order to access the storage settings page you will have to complete it or cancel it.',
+	'STORAGE_UPDATE_REDIRECT'				=> 'Files of %1$s (%2$d/%3$d) are being moved.<br>',
+	'STORAGE_UPDATE_REMOVE_REDIRECT'		=> 'Files of old %1$s (%2$d/%3$d) are being removed.<br>',
+
+	// Template progress bar
+	'STORAGE_UPDATE_IN_PROGRESS'			=> 'Storage update in progress',
+	'STORAGE_UPDATE_IN_PROGRESS_EXPLAIN'	=> 'Files are being moved between storages. This can take some minutes.',
 
 	// Storage names
 	'STORAGE_ATTACHMENT_TITLE'		=> 'Attachments storage',
