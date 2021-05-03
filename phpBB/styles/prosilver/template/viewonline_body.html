@@ -47,7 +47,19 @@
 	</div>
 </div>
 
-<!-- IF LEGEND --><p><em>{L_LEGEND}{L_COLON} {LEGEND}</em></p><!-- ENDIF -->
+{% if legend %}
+	<p>
+		<em>{{ lang('LEGEND') ~ lang('COLON') }}</em>
+		{% for row in legend %}
+			{%- if row.GROUP_NAME == 'BOTS' %}
+				<span style="color: #{{ row.GROUP_COLOUR }}">{{ lang('G_BOTS') }}</span>
+			{%- else %}
+				<a style="color: #{{ row.GROUP_COLOUR }}" href="{{ row.U_GROUP }}">{{ row.GROUP_NAME }}</a>
+			{%- endif %}
+			{%- if not loop.last %}, {% endif %}
+		{% endfor %}
+	</p>
+{% endif %}
 
 <div class="action-bar bar-bottom">
 	<div class="pagination">

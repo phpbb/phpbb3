@@ -64,6 +64,3 @@ services:
             - '@user'
             - '@controller.helper'
             - '@dispatcher'
-
-    viewonline_helper:
-        class: phpbb\viewonline_helper
