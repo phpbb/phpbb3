@@ -631,27 +631,24 @@ class fulltext_sphinx implements search_backend_interface
 	 */
 	public function create_index(int &$post_counter = 0): ?array
 	{
-		if ($this->index_created())
-		{
-			$table_data = array(
-				'COLUMNS'	=> array(
-					'counter_id'	=> array('UINT', 0),
-					'max_doc_id'	=> array('UINT', 0),
-				),
-				'PRIMARY_KEY'	=> 'counter_id',
-			);
-			$this->db_tools->sql_create_table(SPHINX_TABLE, $table_data);
+		$table_data = array(
+			'COLUMNS'	=> array(
+				'counter_id'	=> array('UINT', 0),
+				'max_doc_id'	=> array('UINT', 0),
+			),
+			'PRIMARY_KEY'	=> 'counter_id',
+		);
+		$this->db_tools->sql_create_table(SPHINX_TABLE, $table_data);
 
-			$sql = 'TRUNCATE TABLE ' . SPHINX_TABLE;
-			$this->db->sql_query($sql);
+		$sql = 'TRUNCATE TABLE ' . SPHINX_TABLE;
+		$this->db->sql_query($sql);
 
-			$data = array(
-				'counter_id'	=> '1',
-				'max_doc_id'	=> '0',
-			);
-			$sql = 'INSERT INTO ' . SPHINX_TABLE . ' ' . $this->db->sql_build_array('INSERT', $data);
-			$this->db->sql_query($sql);
-		}
+		$data = array(
+			'counter_id'	=> '1',
+			'max_doc_id'	=> '0',
+		);
+		$sql = 'INSERT INTO ' . SPHINX_TABLE . ' ' . $this->db->sql_build_array('INSERT', $data);
+		$this->db->sql_query($sql);
 
 		return null;
 	}
@@ -661,10 +658,7 @@ class fulltext_sphinx implements search_backend_interface
 	*/
 	public function delete_index(int &$post_counter = null): ?array
 	{
-		if ($this->index_created())
-		{
-			$this->db_tools->sql_table_drop(SPHINX_TABLE);
-		}
+		$this->db_tools->sql_table_drop(SPHINX_TABLE);
 
 		return null;
 	}
